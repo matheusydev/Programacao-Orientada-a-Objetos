@@ -1,25 +1,15 @@
 {
   // Visit https://aka.ms/tsconfig to read more about this file
   "compilerOptions": {
-
-    "target": "es3",
-    "module": "commonjs",
-    "outDir": "./build",
-    "esModuleInterop": true,
-    "allowUnreachableCode": false,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
     // File Layout
     "rootDir": "./src",
     "outDir": "./dist",
-    
+
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
-
-    //"module": "nodenext",
-    //"target": "esnext",
-    //"types": [],
-
+    "module": "nodenext",
+    "target": "esnext",
+    "types": [],
     // For nodejs:
     // "lib": ["esnext"],
     // "types": ["node"],

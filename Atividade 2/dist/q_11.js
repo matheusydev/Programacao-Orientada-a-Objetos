@@ -1,3 +1,5 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 // a. 
 var mensagem = "TypeScript É MUITO LEGAL!";
 console.log(mensagem.toLowerCase());

@@ -1,3 +1,5 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 function teste() {
     var x = 10;
     console.log("Início do programa");

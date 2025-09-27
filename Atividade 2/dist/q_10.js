@@ -1,3 +1,5 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var nome = "Ely";
 var salario = 2000.00;
 var linguagem = "TypeScript";

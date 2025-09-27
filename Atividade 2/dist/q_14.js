@@ -1,3 +1,5 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var numero = /** @class */ (function () {
     function numero(valor) {
         this.valor = valor;

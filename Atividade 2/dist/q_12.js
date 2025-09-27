@@ -1,3 +1,5 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var pessoa = /** @class */ (function () {
     function pessoa(nome, idade) {
         this.nome = nome;
