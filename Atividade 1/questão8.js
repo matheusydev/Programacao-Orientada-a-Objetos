@@ -1,0 +1,15 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class Circulo {
+    raio = 0;
+    calcularArea() {
+        return 3.14 * this.raio * this.raio;
+    }
+    calcularPerimetro() {
+        return 2 * 3.14 * this.raio;
+    }
+}
+let circulo1 = new Circulo();
+circulo1.raio = 5;
+console.log(`Área = ${circulo1.calcularArea()}`);
+console.log(`Perímetro = ${circulo1.calcularPerimetro()}`);
