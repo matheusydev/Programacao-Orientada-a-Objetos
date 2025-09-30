@@ -1,7 +1,6 @@
 function numerotraco(lista: number[]): string {
     let resultado = '';
-    lista.forEach((numero, indice) => {
-        resultado += numero;
+    lista.forEach((numero, indice) => {resultado += numero;
         if (indice < lista.length - 1) {
             resultado += '-';
         }
