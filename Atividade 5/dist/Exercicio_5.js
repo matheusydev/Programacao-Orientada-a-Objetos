@@ -5,5 +5,14 @@ class Cliente {
     nome;
     cpf;
     dataNascimento;
-    contas;
+    contas = [];
+}
+class Conta {
+    id;
+    clientes = [];
+    dataDeAbertura;
+}
+class Banco {
+    contas = [];
+    clientes = [];
 }
