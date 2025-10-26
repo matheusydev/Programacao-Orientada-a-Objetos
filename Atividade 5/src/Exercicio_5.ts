@@ -3,17 +3,27 @@ class Cliente {
     nome: string;
     cpf: string;
     dataNascimento: Date;
-    contas: Conta[] = [];
+    contas: Conta[];
 }
 
 class Conta {
     id: number;
-    clientes: Cliente[] = [];
+    cliente: Cliente;
     dataDeAbertura: Date;
 
 }
 
 class Banco {
-    contas: Conta[] = [];
-    clientes: Cliente[] = [];
+    contas: Conta[];
+    clientes: Cliente[];
+
+
+    inserirCliente(cliente: Cliente): void {
+        this.clientes.push(cliente);
+    }
+
+
+    consultarCliente(cpf: string): Cliente{
+        return this.clientes.find((cliente) => cliente.cpf === cpf);
+    }
 }

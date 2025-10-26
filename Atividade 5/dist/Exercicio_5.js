@@ -5,14 +5,20 @@ class Cliente {
     nome;
     cpf;
     dataNascimento;
-    contas = [];
+    contas;
 }
 class Conta {
     id;
-    clientes = [];
+    cliente;
     dataDeAbertura;
 }
 class Banco {
-    contas = [];
-    clientes = [];
+    contas;
+    clientes;
+    inserirCliente(cliente) {
+        this.clientes.push(cliente);
+    }
+    consultarCliente(cpf) {
+        return this.clientes.find((cliente) => cliente.cpf === cpf);
+    }
 }
