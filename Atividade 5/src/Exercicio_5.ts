@@ -19,11 +19,13 @@ class Conta {
     cliente: Cliente;
     dataDeAbertura: Date;
     numeroConta: string;
+    saldo: number;
 
-    constructor(id: number, numeroConta: string, dataDeAbertura: Date) {
+    constructor(id: number, numeroConta: string, dataDeAbertura: Date, saldo: number) {
         this.id = id;
         this.numeroConta = numeroConta;
         this.dataDeAbertura = dataDeAbertura;
+        this.saldo = saldo;
     }
 }
 
@@ -40,9 +42,11 @@ class Banco {
         this.clientes.push(cliente);
     }
 
+
     consultarCliente(cpf: string): Cliente {
         return this.clientes.find((cliente) => cliente.cpf === cpf);
     }
+
 
     associarContaCliente(numeroConta: string, cpf: string): void {
         const clienteEncontrado = this.clientes.find((cliente) => cliente.cpf === cpf);
@@ -68,4 +72,33 @@ class Banco {
 
         console.log(`Conta ${numeroConta} associada ao cliente ${clienteEncontrado.nome}.`);
     }
+
+
+    listarContasCliente(cpf: string): Conta[] {
+        const clienteEncontrado = this.clientes.find((cliente) => cliente.cpf === cpf);
+
+        if (!clienteEncontrado) {
+            return[]
+        }
+        return clienteEncontrado.contas;
+    }
+
+
+    totalizarSaldoCliente(cpf: string): number {
+        const clienteEncontrado = this.clientes.find((cliente) => cliente.cpf === cpf);
+
+        if (!clienteEncontrado) {
+            console.log(`Cliente com CPF ${cpf} não encontrado.`);
+            return 0;
+        }
+
+        const total = clienteEncontrado.contas.reduce((soma, conta) => soma + conta.saldo,0);
+
+        console.log(`Saldo total do cliente ${clienteEncontrado.nome}: R$ ${total.toFixed(2)}`);
+        return total;
+    }
+
+
+
+
 }
