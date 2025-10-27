@@ -69,7 +69,6 @@ class Banco {
 
         clienteEncontrado.contas.push(contaEncontrada);
         contaEncontrada.cliente = clienteEncontrado;
-
         console.log(`Conta ${numeroConta} associada ao cliente ${clienteEncontrado.nome}.`);
     }
 
@@ -99,6 +98,39 @@ class Banco {
     }
 
 
+    inserirCliente(cliente: Cliente): void {
+        const clienteEncontradoID = this.clientes.find((c) => c.id === cliente.id);
 
+        if (clienteEncontradoID) {
+            console.log(`Cliente com ID ${cliente.id} já existe.`);
+            return;
+        }
+
+        const clienteEncontradoCPF = this.consultarCliente(cliente.cpf);
+        if (clienteEncontradoCPF) {
+            console.log(`Erro: Já existe um cliente com o CPF ${cliente.cpf}.`);
+            return;
+        }  
+
+        this.clientes.push(cliente);
+        console.log(`Cliente ${cliente.id} inserido com sucesso.`);
+    }
+
+
+    inserirConta(conta: Conta): void {
+    const clienteEncontradoID = this.contas.find((c) => c.id === conta.id);
+    if (clienteEncontradoID) {
+        console.log(`Já existe uma conta com o ID ${conta.id}.`);
+        return;
+    }
+
+    const clienteEncontradoNumero = this.contas.find((c) => c.numeroConta === conta.numeroConta);
+    if (clienteEncontradoNumero) {
+        console.log(`Já existe uma conta com o número ${conta.numeroConta}.`);
+        return;
+    }
+
+    this.contas.push(conta);
+    console.log(`Conta ${conta.numeroConta} (ID: ${conta.id}) criada com sucesso.`);
 
 }
