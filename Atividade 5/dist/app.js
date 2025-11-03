@@ -3,186 +3,233 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.App = void 0;
 const prompt_sync_1 = __importDefault(require("prompt-sync"));
 const banco_1 = require("./banco");
-const input = (0, prompt_sync_1.default)();
-const banco = new banco_1.Banco();
-banco.carregarDados();
-let opcao = "";
-do {
-    console.log("\n=== Bem-vindo ao Banco ===\n");
-    console.log("Contas:\n" +
-        "01 - Inserir\n" +
-        "02 - Consultar\n" +
-        "03 - Sacar\n" +
-        "04 - Depositar\n" +
-        "05 - Excluir\n" +
-        "06 - Transferir\n" +
-        "07 - Transferir p/ vários\n" +
-        "08 - Totalizações\n" +
-        "09 - Mudar titularidade\n" +
-        "10 - Listar contas sem cliente\n" +
-        "11 - Atribuir titularidade\n" +
-        "12 - Atualizar conta\n");
-    console.log("Clientes:\n" +
-        "20 - Inserir\n" +
-        "21 - Consultar\n" +
-        "22 - Associar\n" +
-        "23 - Excluir\n" +
-        "24 - Listar contas de cliente\n" +
-        "25 - Totalizar saldo de cliente\n" +
-        "26 - Atualizar cliente\n");
-    console.log("0 - Sair\n");
-    opcao = input("Opção: ");
-    switch (opcao) {
-        case "01": {
-            const numero = input("Número da conta: ");
-            const saldo = parseFloat(input("Saldo inicial: "));
-            const id = banco.contas.length + 1;
-            banco.inserirConta(new banco_1.Conta(id, numero, new Date(), saldo));
-            break;
-        }
-        case "02": {
-            const numero = input("Número da conta: ");
-            const conta = banco.contas.find(c => c.numeroConta === numero);
-            if (conta) {
-                console.log(`Conta: ${conta.numeroConta}, Saldo: ${conta.saldo.toFixed(2)}, Cliente: ${conta.cliente?.nome ?? "Sem titular"}`);
-            }
-            else
-                console.log("Conta não encontrada.");
-            break;
-        }
-        case "03": {
-            const numero = input("Número da conta: ");
-            const valor = parseFloat(input("Valor para sacar: "));
-            banco.sacar(numero, valor);
-            break;
-        }
-        case "04": {
-            const numero = input("Número da conta: ");
-            const valor = parseFloat(input("Valor para depositar: "));
-            banco.depositar(numero, valor);
-            break;
-        }
-        case "05": {
-            const numero = input("Número da conta: ");
-            banco.excluirConta(numero, true);
-            break;
-        }
-        case "06": {
-            const origem = input("Conta de origem: ");
-            const destino = input("Conta de destino: ");
-            const valor = parseFloat(input("Valor da transferência: "));
-            banco.transferir(origem, destino, valor);
-            break;
-        }
-        case "07": {
-            const origem = input("Conta de origem: ");
-            const destinos = input("Contas destino (separadas por vírgula): ").split(",");
-            const valor = parseFloat(input("Valor da transferência: "));
-            banco.transferirParaVarios(origem, destinos, valor);
-            break;
-        }
-        case "08": {
-            console.log("Quantidade de contas:", banco.quantidadeContas());
-            console.log("Total saldo todas contas:", banco.totalSaldoTodasContas().toFixed(2));
-            console.log("Média saldo contas:", banco.mediaSaldoContas().toFixed(2));
-            break;
-        }
-        case "09": {
-            const numero = input("Número da conta: ");
-            const cpf = input("CPF do novo titular: ");
-            banco.mudarTitularidade(numero, cpf);
-            break;
-        }
-        case "10": {
-            const contasSem = banco.listarContasSemCliente();
-            console.log("Contas sem titular:", contasSem.map(c => c.numeroConta).join(", "));
-            break;
-        }
-        case "11": {
-            const cpf = input("CPF do cliente: ");
-            const contasNums = input("Números das contas sem titular (vírgula separadas): ").split(",");
-            banco.atribuirTitularidade(contasNums, cpf);
-            break;
-        }
-        case "12": {
-            const numeroConta = input("Número da conta a atualizar: ");
-            const novoNumero = input("Novo número da conta (ou vazio): ");
-            const novoSaldo = input("Novo saldo (ou vazio): ");
-            const novaData = input("Nova data de abertura (AAAA-MM-DD) (ou vazio): ");
-            banco.atualizarConta(numeroConta, {
-                numeroConta: novoNumero || undefined,
-                saldo: novoSaldo ? parseFloat(novoSaldo) : undefined,
-                dataDeAbertura: novaData ? new Date(novaData) : undefined
-            });
-            break;
-        }
-        case "20": {
-            const id = banco.clientes.length + 1;
-            const nome = input("Nome do cliente: ");
-            const cpf = input("CPF do cliente: ");
-            const data = new Date(input("Data de nascimento (AAAA-MM-DD): "));
-            banco.inserirCliente(new banco_1.Cliente(id, nome, cpf, data));
-            break;
-        }
-        case "21": {
-            const cpf = input("CPF do cliente: ");
-            const cliente = banco.consultarCliente(cpf);
-            if (cliente) {
-                console.log(`Cliente: ${cliente.nome}, CPF: ${cliente.cpf}, Contas: ${cliente.contas.map(c => c.numeroConta).join(", ")}`);
-            }
-            else
-                console.log("Cliente não encontrado.");
-            break;
-        }
-        case "22": {
-            const numeroConta = input("Número da conta: ");
-            const cpf = input("CPF do cliente: ");
-            banco.associarContaCliente(numeroConta, cpf);
-            break;
-        }
-        case "23": {
-            const cpf = input("CPF do cliente: ");
-            const removerContas = input("Remover contas associadas? (s/n): ").toLowerCase() === "s";
-            banco.excluirCliente(cpf, removerContas);
-            break;
-        }
-        case "24": {
-            const cpf = input("CPF do cliente: ");
-            const contas = banco.listarContasCliente(cpf);
-            if (contas.length === 0) {
-                console.log("Nenhuma conta encontrada para este cliente.");
-            }
-            else {
-                console.log("Contas do cliente:", contas.map(c => c.numeroConta).join(", "));
-            }
-            break;
-        }
-        case "25": {
-            const cpf = input("CPF do cliente: ");
-            banco.totalizarSaldoCliente(cpf);
-            break;
-        }
-        case "26": {
-            const cpf = input("CPF do cliente a atualizar: ");
-            const novoNome = input("Novo nome (ou deixe vazio para não alterar): ");
-            const novoCpf = input("Novo CPF (ou deixe vazio): ");
-            const novaData = input("Nova data de nascimento (AAAA-MM-DD) (ou vazio): ");
-            banco.atualizarCliente(cpf, {
-                nome: novoNome || undefined,
-                cpf: novoCpf || undefined,
-                dataNascimento: novaData ? new Date(novaData) : undefined
-            });
-            break;
-        }
-        case "0":
-            console.log("Aplicação encerrada.");
-            break;
-        default:
-            console.log("Opção inválida!");
-            break;
+class App {
+    banco;
+    input = (0, prompt_sync_1.default)();
+    constructor() {
+        this.banco = new banco_1.Banco();
+        this.banco.carregarDados();
     }
-    if (opcao !== "0")
-        input("\nOperação finalizada. Pressione <enter> para continuar...");
-} while (opcao !== "0");
+    menu() {
+        let opcao = "";
+        do {
+            console.log("\n=== Bem-vindo ao Banco ===\n");
+            console.log("Contas:\n" +
+                "01 - Inserir\n" +
+                "02 - Consultar\n" +
+                "03 - Sacar\n" +
+                "04 - Depositar\n" +
+                "05 - Excluir\n" +
+                "06 - Transferir\n" +
+                "07 - Transferir p/ vários\n" +
+                "08 - Totalizações\n" +
+                "09 - Mudar titularidade\n" +
+                "10 - Listar contas sem cliente\n" +
+                "11 - Atribuir titularidade\n" +
+                "12 - Atualizar conta\n");
+            console.log("Clientes:\n" +
+                "20 - Inserir\n" +
+                "21 - Consultar\n" +
+                "22 - Associar\n" +
+                "23 - Excluir\n" +
+                "24 - Listar contas de cliente\n" +
+                "25 - Totalizar saldo de cliente\n" +
+                "26 - Atualizar cliente\n");
+            console.log("0 - Sair\n");
+            opcao = this.input("Opção: ");
+            switch (opcao) {
+                case "01":
+                    this.inserirConta();
+                    break;
+                case "02":
+                    this.consultarConta();
+                    break;
+                case "03":
+                    this.sacarConta();
+                    break;
+                case "04":
+                    this.depositarConta();
+                    break;
+                case "05":
+                    this.excluirConta();
+                    break;
+                case "06":
+                    this.transferir();
+                    break;
+                case "07":
+                    this.transferirParaVarios();
+                    break;
+                case "08":
+                    this.totalizacoes();
+                    break;
+                case "09":
+                    this.mudarTitularidade();
+                    break;
+                case "10":
+                    this.listarContasSemCliente();
+                    break;
+                case "11":
+                    this.atribuirTitularidade();
+                    break;
+                case "12":
+                    this.atualizarConta();
+                    break;
+                case "20":
+                    this.inserirCliente();
+                    break;
+                case "21":
+                    this.consultarCliente();
+                    break;
+                case "22":
+                    this.associarContaCliente();
+                    break;
+                case "23":
+                    this.excluirCliente();
+                    break;
+                case "24":
+                    this.listarContasCliente();
+                    break;
+                case "25":
+                    this.totalizarSaldoCliente();
+                    break;
+                case "26":
+                    this.atualizarCliente();
+                    break;
+                case "0":
+                    console.log("Aplicação encerrada.");
+                    break;
+                default:
+                    console.log("Opção inválida!");
+                    break;
+            }
+            if (opcao !== "0")
+                this.input("\nOperação finalizada. Pressione <enter> para continuar...");
+        } while (opcao !== "0");
+    }
+    inserirConta() {
+        const numero = this.input("Número da conta: ");
+        const saldo = parseFloat(this.input("Saldo inicial: "));
+        const id = this.banco.contas.length + 1;
+        this.banco.inserirConta(new banco_1.Conta(id, numero, new Date(), saldo));
+    }
+    consultarConta() {
+        const numero = this.input("Número da conta: ");
+        const conta = this.banco.contas.find(c => c.numeroConta === numero);
+        if (conta) {
+            console.log(`Conta: ${conta.numeroConta}, Saldo: ${conta.saldo.toFixed(2)}, Cliente: ${conta.cliente?.nome ?? "Sem titular"}`);
+        }
+        else
+            console.log("Conta não encontrada.");
+    }
+    sacarConta() {
+        const numero = this.input("Número da conta: ");
+        const valor = parseFloat(this.input("Valor para sacar: "));
+        this.banco.sacar(numero, valor);
+    }
+    depositarConta() {
+        const numero = this.input("Número da conta: ");
+        const valor = parseFloat(this.input("Valor para depositar: "));
+        this.banco.depositar(numero, valor);
+    }
+    excluirConta() {
+        const numero = this.input("Número da conta: ");
+        this.banco.excluirConta(numero, true);
+    }
+    transferir() {
+        const origem = this.input("Conta de origem: ");
+        const destino = this.input("Conta de destino: ");
+        const valor = parseFloat(this.input("Valor da transferência: "));
+        this.banco.transferir(origem, destino, valor);
+    }
+    transferirParaVarios() {
+        const origem = this.input("Conta de origem: ");
+        const destinos = this.input("Contas destino (separadas por vírgula): ").split(",");
+        const valor = parseFloat(this.input("Valor da transferência: "));
+        this.banco.transferirParaVarios(origem, destinos, valor);
+    }
+    totalizacoes() {
+        console.log("Quantidade de contas:", this.banco.quantidadeContas());
+        console.log("Total saldo todas contas:", this.banco.totalSaldoTodasContas().toFixed(2));
+        console.log("Média saldo contas:", this.banco.mediaSaldoContas().toFixed(2));
+    }
+    mudarTitularidade() {
+        const numero = this.input("Número da conta: ");
+        const cpf = this.input("CPF do novo titular: ");
+        this.banco.mudarTitularidade(numero, cpf);
+    }
+    listarContasSemCliente() {
+        const contasSem = this.banco.listarContasSemCliente();
+        console.log("Contas sem titular:", contasSem.map(c => c.numeroConta).join(", "));
+    }
+    atribuirTitularidade() {
+        const cpf = this.input("CPF do cliente: ");
+        const contasNums = this.input("Números das contas sem titular (vírgula separadas): ").split(",");
+        this.banco.atribuirTitularidade(contasNums, cpf);
+    }
+    atualizarConta() {
+        const numeroConta = this.input("Número da conta a atualizar: ");
+        const novoNumero = this.input("Novo número da conta (ou vazio): ");
+        const novoSaldo = this.input("Novo saldo (ou vazio): ");
+        const novaData = this.input("Nova data de abertura (AAAA-MM-DD) (ou vazio): ");
+        this.banco.atualizarConta(numeroConta, {
+            numeroConta: novoNumero || undefined,
+            saldo: novoSaldo ? parseFloat(novoSaldo) : undefined,
+            dataDeAbertura: novaData ? new Date(novaData) : undefined
+        });
+    }
+    inserirCliente() {
+        const id = this.banco.clientes.length + 1;
+        const nome = this.input("Nome do cliente: ");
+        const cpf = this.input("CPF do cliente: ");
+        const data = new Date(this.input("Data de nascimento (AAAA-MM-DD): "));
+        this.banco.inserirCliente(new banco_1.Cliente(id, nome, cpf, data));
+    }
+    consultarCliente() {
+        const cpf = this.input("CPF do cliente: ");
+        const cliente = this.banco.consultarCliente(cpf);
+        if (cliente) {
+            console.log(`Cliente: ${cliente.nome}, CPF: ${cliente.cpf}, Contas: ${cliente.contas.map(c => c.numeroConta).join(", ")}`);
+        }
+        else
+            console.log("Cliente não encontrado.");
+    }
+    associarContaCliente() {
+        const numeroConta = this.input("Número da conta: ");
+        const cpf = this.input("CPF do cliente: ");
+        this.banco.associarContaCliente(numeroConta, cpf);
+    }
+    excluirCliente() {
+        const cpf = this.input("CPF do cliente: ");
+        const removerContas = this.input("Remover contas associadas? (s/n): ").toLowerCase() === "s";
+        this.banco.excluirCliente(cpf, removerContas);
+    }
+    listarContasCliente() {
+        const cpf = this.input("CPF do cliente: ");
+        const contas = this.banco.listarContasCliente(cpf);
+        if (contas.length === 0)
+            console.log("Nenhuma conta encontrada para este cliente.");
+        else
+            console.log("Contas do cliente:", contas.map(c => c.numeroConta).join(", "));
+    }
+    totalizarSaldoCliente() {
+        const cpf = this.input("CPF do cliente: ");
+        this.banco.totalizarSaldoCliente(cpf);
+    }
+    atualizarCliente() {
+        const cpf = this.input("CPF do cliente a atualizar: ");
+        const novoNome = this.input("Novo nome (ou deixe vazio para não alterar): ");
+        const novoCpf = this.input("Novo CPF (ou deixe vazio): ");
+        const novaData = this.input("Nova data de nascimento (AAAA-MM-DD) (ou vazio): ");
+        this.banco.atualizarCliente(cpf, {
+            nome: novoNome || undefined,
+            cpf: novoCpf || undefined,
+            dataNascimento: novaData ? new Date(novaData) : undefined
+        });
+    }
+}
+exports.App = App;
+const app = new App();
+app.menu();
