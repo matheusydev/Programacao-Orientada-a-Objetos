@@ -1,11 +1,12 @@
-export class Cliente {
-    id: number;
-    nome: string;
-    cpf: string;
-    dataNascimento: Date;
-    contas: Conta[];
-
-    constructor(id: number, nome: string, cpf: string, dataNascimento: Date) {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class Cliente {
+    id;
+    nome;
+    cpf;
+    dataNascimento;
+    contas;
+    constructor(id, nome, cpf, dataNascimento) {
         this.id = id;
         this.nome = nome;
         this.cpf = cpf;
@@ -13,32 +14,27 @@ export class Cliente {
         this.contas = [];
     }
 }
-
-export class Conta {
-    id: number;
-    cliente?: Cliente;
-    dataDeAbertura: Date;
-    numeroConta: string;
-    saldo: number;
-
-    constructor(id: number, numeroConta: string, dataDeAbertura: Date, saldo: number) {
+class Conta {
+    id;
+    cliente;
+    dataDeAbertura;
+    numeroConta;
+    saldo;
+    constructor(id, numeroConta, dataDeAbertura, saldo) {
         this.id = id;
         this.numeroConta = numeroConta;
         this.dataDeAbertura = dataDeAbertura;
         this.saldo = saldo;
     }
 }
-
-export class Banco {
-    contas: Conta[];
-    clientes: Cliente[];
-
+class Banco {
+    contas;
+    clientes;
     constructor() {
         this.contas = [];
         this.clientes = [];
     }
-
-    inserirCliente(cliente: Cliente): void {
+    inserirCliente(cliente) {
         const existeId = this.clientes.find((c) => c.id === cliente.id);
         if (existeId) {
             console.log(`Cliente com ID ${cliente.id} já existe.`);
@@ -52,12 +48,10 @@ export class Banco {
         this.clientes.push(cliente);
         console.log(`Cliente ${cliente.id} inserido com sucesso.`);
     }
-
-    consultarCliente(cpf: string): Cliente | undefined {
+    consultarCliente(cpf) {
         return this.clientes.find((cliente) => cliente.cpf === cpf);
     }
-
-    inserirConta(conta: Conta): void {
+    inserirConta(conta) {
         const existeId = this.contas.find((c) => c.id === conta.id);
         if (existeId) {
             console.log(`Já existe uma conta com o ID ${conta.id}.`);
@@ -71,8 +65,7 @@ export class Banco {
         this.contas.push(conta);
         console.log(`Conta ${conta.numeroConta} (ID: ${conta.id}) criada com sucesso.`);
     }
-
-    associarContaCliente(numeroConta: string, cpf: string): void {
+    associarContaCliente(numeroConta, cpf) {
         const clienteEncontrado = this.clientes.find((cliente) => cliente.cpf === cpf);
         const contaEncontrada = this.contas.find((conta) => conta.numeroConta === numeroConta);
         if (!clienteEncontrado) {
@@ -94,14 +87,13 @@ export class Banco {
         contaEncontrada.cliente = clienteEncontrado;
         console.log(`Conta ${numeroConta} associada ao cliente ${clienteEncontrado.nome}.`);
     }
-
-    listarContasCliente(cpf: string): Conta[] {
+    listarContasCliente(cpf) {
         const clienteEncontrado = this.clientes.find((cliente) => cliente.cpf === cpf);
-        if (!clienteEncontrado) return [];
+        if (!clienteEncontrado)
+            return [];
         return clienteEncontrado.contas;
     }
-
-    totalizarSaldoCliente(cpf: string): number {
+    totalizarSaldoCliente(cpf) {
         const clienteEncontrado = this.clientes.find((cliente) => cliente.cpf === cpf);
         if (!clienteEncontrado) {
             console.log(`Cliente com CPF ${cpf} não encontrado.`);
@@ -111,8 +103,7 @@ export class Banco {
         console.log(`Saldo total do cliente ${clienteEncontrado.nome}: R$ ${total.toFixed(2)}`);
         return total;
     }
-
-    excluirCliente(cpf: string, removerContasAssociadas: boolean = true): boolean {
+    excluirCliente(cpf, removerContasAssociadas = true) {
         const idx = this.clientes.findIndex(c => c.cpf === cpf);
         if (idx === -1) {
             console.log(`Cliente com CPF ${cpf} não encontrado.`);
@@ -122,9 +113,11 @@ export class Banco {
         if (removerContasAssociadas) {
             cliente.contas.forEach(conta => {
                 const idxConta = this.contas.findIndex(c => c.numeroConta === conta.numeroConta);
-                if (idxConta !== -1) this.contas.splice(idxConta, 1);
+                if (idxConta !== -1)
+                    this.contas.splice(idxConta, 1);
             });
-        } else {
+        }
+        else {
             cliente.contas.forEach(conta => {
                 conta.cliente = undefined;
             });
@@ -133,8 +126,7 @@ export class Banco {
         console.log(`Cliente com CPF ${cpf} excluído com sucesso.`);
         return true;
     }
-
-    excluirConta(numeroConta: string, removerClienteSeSemContas: boolean = false): boolean {
+    excluirConta(numeroConta, removerClienteSeSemContas = false) {
         const idx = this.contas.findIndex(c => c.numeroConta === numeroConta);
         if (idx === -1) {
             console.log(`Conta número ${numeroConta} não encontrada.`);
@@ -146,23 +138,26 @@ export class Banco {
             cliente.contas = cliente.contas.filter(c => c.numeroConta !== numeroConta);
             if (removerClienteSeSemContas && cliente.contas.length === 0) {
                 const idxCli = this.clientes.findIndex(c => c.cpf === cliente.cpf);
-                if (idxCli !== -1) this.clientes.splice(idxCli, 1);
+                if (idxCli !== -1)
+                    this.clientes.splice(idxCli, 1);
             }
         }
         this.contas.splice(idx, 1);
         console.log(`Conta ${numeroConta} excluída com sucesso.`);
         return true;
     }
-
-    atualizarCliente(cpf: string, novosDados: { id?: number; nome?: string; cpf?: string; dataNascimento?: Date; }): boolean {
+    atualizarCliente(cpf, novosDados) {
         const cliente = this.consultarCliente(cpf);
         if (!cliente) {
             console.log(`Cliente com CPF ${cpf} não encontrado.`);
             return false;
         }
-        if (novosDados.nome !== undefined) cliente.nome = novosDados.nome;
-        if (novosDados.dataNascimento !== undefined) cliente.dataNascimento = novosDados.dataNascimento;
-        if (novosDados.id !== undefined) cliente.id = novosDados.id;
+        if (novosDados.nome !== undefined)
+            cliente.nome = novosDados.nome;
+        if (novosDados.dataNascimento !== undefined)
+            cliente.dataNascimento = novosDados.dataNascimento;
+        if (novosDados.id !== undefined)
+            cliente.id = novosDados.id;
         if (novosDados.cpf !== undefined) {
             const outro = this.clientes.find(c => c.cpf === novosDados.cpf && c !== cliente);
             if (outro) {
@@ -174,8 +169,7 @@ export class Banco {
         console.log(`Cliente ${cliente.nome} atualizado.`);
         return true;
     }
-
-    atualizarConta(numeroConta: string, novosDados: { id?: number; numeroConta?: string; saldo?: number; dataDeAbertura?: Date; }): boolean {
+    atualizarConta(numeroConta, novosDados) {
         const conta = this.contas.find(c => c.numeroConta === numeroConta);
         if (!conta) {
             console.log(`Conta número ${numeroConta} não encontrada.`);
@@ -197,14 +191,16 @@ export class Banco {
                 console.log(`Número da conta alterado de ${antigoNumero} para ${conta.numeroConta}.`);
             }
         }
-        if (novosDados.saldo !== undefined) conta.saldo = novosDados.saldo;
-        if (novosDados.dataDeAbertura !== undefined) conta.dataDeAbertura = novosDados.dataDeAbertura;
-        if (novosDados.id !== undefined) conta.id = novosDados.id;
+        if (novosDados.saldo !== undefined)
+            conta.saldo = novosDados.saldo;
+        if (novosDados.dataDeAbertura !== undefined)
+            conta.dataDeAbertura = novosDados.dataDeAbertura;
+        if (novosDados.id !== undefined)
+            conta.id = novosDados.id;
         console.log(`Conta ${conta.numeroConta} atualizada.`);
         return true;
     }
-
-    sacar(numeroConta: string, valor: number): boolean {
+    sacar(numeroConta, valor) {
         if (valor <= 0) {
             console.log(`Valor de saque inválido: ${valor}.`);
             return false;
@@ -222,8 +218,7 @@ export class Banco {
         console.log(`Saque de R$ ${valor.toFixed(2)} realizado na conta ${numeroConta}. Saldo atual: R$ ${conta.saldo.toFixed(2)}.`);
         return true;
     }
-
-    depositar(numeroConta: string, valor: number): boolean {
+    depositar(numeroConta, valor) {
         if (valor <= 0) {
             console.log(`Valor de depósito inválido: ${valor}.`);
             return false;
@@ -237,8 +232,7 @@ export class Banco {
         console.log(`Depósito de R$ ${valor.toFixed(2)} realizado na conta ${numeroConta}. Saldo atual: R$ ${conta.saldo.toFixed(2)}.`);
         return true;
     }
-
-    transferir(numeroContaOrigem: string, numeroContaDestino: string, valor: number): boolean {
+    transferir(numeroContaOrigem, numeroContaDestino, valor) {
         if (valor <= 0) {
             console.log(`Valor de transferência inválido: ${valor}.`);
             return false;
@@ -267,9 +261,8 @@ export class Banco {
         console.log(`Saldo origem: R$ ${contaOrigem.saldo.toFixed(2)} | Saldo destino: R$ ${contaDestino.saldo.toFixed(2)}.`);
         return true;
     }
-
-    transferirParaVarios(numeroContaOrigem: string, destinos: string[], valor: number): { success: string[]; failed: { destino: string; motivo: string }[] } {
-        const resultado = { success: [] as string[], failed: [] as { destino: string; motivo: string }[] };
+    transferirParaVarios(numeroContaOrigem, destinos, valor) {
+        const resultado = { success: [], failed: [] };
         const contaOrigem = this.contas.find(c => c.numeroConta === numeroContaOrigem);
         if (!contaOrigem) {
             destinos.forEach(d => resultado.failed.push({ destino: d, motivo: `Conta de origem ${numeroContaOrigem} não encontrada` }));
@@ -301,22 +294,19 @@ export class Banco {
         }
         return resultado;
     }
-
-    quantidadeContas(): number {
+    quantidadeContas() {
         return this.contas.length;
     }
-
-    totalSaldoTodasContas(): number {
+    totalSaldoTodasContas() {
         return this.contas.reduce((s, c) => s + c.saldo, 0);
     }
-
-    mediaSaldoContas(): number {
+    mediaSaldoContas() {
         const quantidade = this.quantidadeContas();
-        if (quantidade === 0) return 0;
+        if (quantidade === 0)
+            return 0;
         return this.totalSaldoTodasContas() / quantidade;
     }
-
-    mudarTitularidade(numeroConta: string, novoCpf: string): boolean {
+    mudarTitularidade(numeroConta, novoCpf) {
         const conta = this.contas.find(c => c.numeroConta === numeroConta);
         if (!conta) {
             console.log(`Conta ${numeroConta} não encontrada.`);
@@ -335,12 +325,10 @@ export class Banco {
         console.log(`Titularidade da conta ${numeroConta} alterada para ${novoCliente.nome}.`);
         return true;
     }
-
-    listarContasSemCliente(): Conta[] {
+    listarContasSemCliente() {
         return this.contas.filter(c => !c.cliente);
     }
-
-    atribuirTitularidade(contasNumeros: string[], cpf: string): number {
+    atribuirTitularidade(contasNumeros, cpf) {
         const cliente = this.consultarCliente(cpf);
         if (!cliente) {
             console.log(`Cliente com CPF ${cpf} não encontrado.`);
@@ -349,8 +337,10 @@ export class Banco {
         let contador = 0;
         for (const num of contasNumeros) {
             const conta = this.contas.find(c => c.numeroConta === num);
-            if (!conta) continue;
-            if (conta.cliente) continue;
+            if (!conta)
+                continue;
+            if (conta.cliente)
+                continue;
             cliente.contas.push(conta);
             conta.cliente = cliente;
             contador++;
@@ -359,3 +349,63 @@ export class Banco {
         return contador;
     }
 }
+// //----- teste ------
+// const banco = new Banco();
+// const cli1 = new Cliente(1, "Mitsuki Miyawaki", "111.111.111-11", new Date("1990-09-23"));
+// const cli2 = new Cliente(2, "BeKarly Marina Loaizato", "222.222.222-22", new Date("1994-07-17"));
+// const cli3 = new Cliente(3, "Laufey Lín Bing", "333.333.333-33", new Date("1999-04-23"));
+// const cli4 = new Cliente(4, "Amala Ratna Zandile", "444.444.444-44", new Date("1995-10-21"));
+// const cli5 = new Cliente(5, "Sia Kate Isobelle", "555.555.555-55", new Date("1975-12-18"));
+// banco.inserirCliente(cli1);
+// banco.inserirCliente(cli2);
+// banco.inserirCliente(cli3);
+// banco.inserirCliente(cli4);
+// banco.inserirCliente(cli5);
+// const c1 = new Conta(1, "0001", new Date(), 1000);
+// const c2 = new Conta(2, "0002", new Date(), 200);
+// const c3 = new Conta(3, "0003", new Date(), 50);
+// const c4 = new Conta(4, "0004", new Date(), 0);
+// const c5 = new Conta(5, "0005", new Date(), 500);
+// banco.inserirConta(c1);
+// banco.inserirConta(c2);
+// banco.inserirConta(c3);
+// banco.inserirConta(c4);
+// banco.inserirConta(c5);
+// banco.associarContaCliente("0001", "111.111.111-11");
+// banco.associarContaCliente("0002", "111.111.111-11");
+// banco.associarContaCliente("0003", "111.111.111-11");
+// banco.associarContaCliente("0004", "111.111.111-11");
+// banco.associarContaCliente("0005", "222.222.222-22");
+// console.log("\n--- transferirParaVarios ---");
+// console.log("Saldos antes:", banco.contas.map(c => `${c.numeroConta}:${c.saldo}`));
+// const res = banco.transferirParaVarios("0001", ["0002", "0003", "0004"], 300);
+// console.log("Resultado:", res);
+// console.log("Saldos depois:", banco.contas.map(c => `${c.numeroConta}:${c.saldo}`));
+// console.log("\n--- quantidadeContas / totalSaldoTodasContas / mediaSaldoContas ---");
+// console.log("Quantidade de contas:", banco.quantidadeContas());
+// console.log("Total saldo todas contas:", banco.totalSaldoTodasContas());
+// console.log("Média saldo contas:", banco.mediaSaldoContas());
+// console.log("\n--- mudarTitularidade ---");
+// console.log("Titular antes de 0005:", c5.cliente?.nome ?? "sem titular");
+// banco.mudarTitularidade("0005", "333.333.333-33");
+// console.log("Titular depois de 0005:", c5.cliente?.nome ?? "sem titular");
+// console.log("Contas de Laufey:", banco.listarContasCliente("333.333.333-33").map(c => c.numeroConta));
+// console.log("\n--- excluirCliente (dessociar contas) ---");
+// banco.excluirCliente("111.111.111-11", false);
+// console.log("Clientes atuais:", banco.clientes.map(c => c.nome));
+// console.log("Contas sem titular:", banco.listarContasSemCliente().map(c => c.numeroConta));
+// console.log("\n--- atribuirTitularidade ---");
+// const sem = banco.listarContasSemCliente().map(c => c.numeroConta);
+// console.log("Contas sem titular antes:", sem);
+// banco.atribuirTitularidade(sem, "222.222.222-22");
+// console.log("Contas de Beto:", banco.listarContasCliente("222.222.222-22").map(c => c.numeroConta));
+// console.log("\n--- excluirConta (remover cliente se ficar sem contas) ---");
+// console.log("Clientes antes:", banco.clientes.map(c => `${c.nome}:${c.contas.length}`));
+// banco.excluirConta("0005", true);
+// console.log("Clientes depois:", banco.clientes.map(c => `${c.nome}:${c.contas.length}`));
+// console.log("Contas restantes:", banco.contas.map(c => c.numeroConta));
+// console.log("\n--- transferir simples / sacar / depositar ---");
+// banco.depositar("0002", 100);
+// banco.sacar("0002", 50);
+// banco.transferir("0002", "0003", 200);
+// console.log("Saldos finais:", banco.contas.map(c => `${c.numeroConta}:${c.saldo}`));
