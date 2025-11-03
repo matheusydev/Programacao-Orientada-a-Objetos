@@ -38,6 +38,38 @@ export class Banco {
         this.clientes = [];
     }
 
+    carregarDados(): void {
+    const cli1 = new Cliente(1, "Mitsuki Miyawaki", "111.111.111-11", new Date("1990-09-23"));
+    const cli2 = new Cliente(2, "BeKarly Marina Loaizato", "222.222.222-22", new Date("1994-07-17"));
+    const cli3 = new Cliente(3, "Laufey Lín Bing", "333.333.333-33", new Date("1999-04-23"));
+    const cli4 = new Cliente(4, "Amala Ratna Zandile", "444.444.444-44", new Date("1995-10-21"));
+    const cli5 = new Cliente(5, "Sia Kate Isobelle", "555.555.555-55", new Date("1975-12-18"));
+
+    this.inserirCliente(cli1);
+    this.inserirCliente(cli2);
+    this.inserirCliente(cli3);
+    this.inserirCliente(cli4);
+    this.inserirCliente(cli5);
+
+    const c1 = new Conta(1, "0001", new Date(), 1000);
+    const c2 = new Conta(2, "0002", new Date(), 200);
+    const c3 = new Conta(3, "0003", new Date(), 50);
+    const c4 = new Conta(4, "0004", new Date(), 0);
+    const c5 = new Conta(5, "0005", new Date(), 500);
+
+    this.inserirConta(c1);
+    this.inserirConta(c2);
+    this.inserirConta(c3);
+    this.inserirConta(c4);
+    this.inserirConta(c5);
+
+    this.associarContaCliente("0001", "111.111.111-11");
+    this.associarContaCliente("0002", "111.111.111-11");
+    this.associarContaCliente("0003", "111.111.111-11");
+    this.associarContaCliente("0004", "111.111.111-11");
+    this.associarContaCliente("0005", "222.222.222-22");
+    }
+
     inserirCliente(cliente: Cliente): void {
         const existeId = this.clientes.find((c) => c.id === cliente.id);
         if (existeId) {
@@ -359,3 +391,4 @@ export class Banco {
         return contador;
     }
 }
+
